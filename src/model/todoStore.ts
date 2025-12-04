@@ -1,7 +1,9 @@
+import { nanoid } from "nanoid"
 import { create, type StateCreator } from "zustand"
 import { devtools } from "zustand/middleware"
 
 export type TodoType = {
+  id: string
   title: string
   isComplete: boolean
 }
@@ -12,7 +14,8 @@ type TodoState = {
 
 type TodoAction = {
   addTodo: (value: string) => void
-  changeIsComplete: (index: number) => void
+  changeIsComplete: (id: string) => void
+  deleteTodo: (id: string) => void
 }
 
 const todoSlice: StateCreator<
@@ -25,26 +28,35 @@ const todoSlice: StateCreator<
     if (!trimmedValue) return
 
     const { todos } = get()
-
-    set(
-      { todos: [...todos, { title: value, isComplete: false }] },
-      false,
-      `addTodo ${value}`
-    )
+    const newTodo: TodoType = {
+      id: nanoid(),
+      title: value,
+      isComplete: false,
+    }
+    set({ todos: [...todos, newTodo] }, false, `addTodo ${value}`)
   },
-  changeIsComplete: (index: number) => {
+  deleteTodo: (id: string) => {
     const { todos } = get()
-    if (index < 0 || index >= todos.length) return
+    const newTodos = todos.filter((todo) => todo.id !== id)
 
-    const newTodos: TodoType[] = [
-      ...todos.slice(0, index),
-      { ...todos[index], isComplete: !todos[index].isComplete },
-      ...todos.slice(index + 1),
-    ]
+    set({ todos: newTodos })
+  },
+  changeIsComplete: (id: string) => {
+    const { todos } = get()
+
+    const newTodos: TodoType[] = todos.map((todo) =>
+      todo.id === id ? { ...todo, isComplete: !todo.isComplete } : todo
+    )
+
+    const changedTodo = todos.find((todo) => todo.id === id)
+    console.log("changedTodo: ", changedTodo)
+
     set(
       { todos: newTodos },
       false,
-      `ChangeIsComplete ${todos[index].title} to ${newTodos[index].isComplete}`
+      changedTodo
+        ? `ChangeIsComplete ${changedTodo.title} to ${!changedTodo.isComplete}`
+        : "ChangeIsComplete"
     )
   },
 })

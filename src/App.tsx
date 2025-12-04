@@ -4,7 +4,7 @@ import { useTodoStore } from "./model/todoStore"
 import { useState, useRef, useEffect } from "react"
 
 function App() {
-  const { todos, addTodo, changeIsComplete } = useTodoStore()
+  const { todos, addTodo, changeIsComplete, deleteTodo } = useTodoStore()
   const [inputValue, setInputValue] = useState<string>("")
   const inputRef = useRef<InputRef>(null)
 
@@ -42,15 +42,20 @@ function App() {
         />
         <Button onClick={handleAddTodo}>Add todo</Button>
       </div>
-      {todos.map((todo, i) => (
-        <Card key={i} className="card">
-          <Checkbox
-            checked={todo.isComplete}
-            onChange={() => changeIsComplete(i)}
-          />
-          <div>{todo.title}</div>
-        </Card>
-      ))}
+      <ul>
+        {todos.map((todo) => (
+          <li key={todo.id} style={{ marginBottom: "15px" }}>
+            <Card className="card">
+              <Checkbox
+                checked={todo.isComplete}
+                onChange={() => changeIsComplete(todo.id)}
+              />
+              <div>{todo.title}</div>
+              <Button onClick={() => deleteTodo(todo.id)}>Delete</Button>
+            </Card>
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }

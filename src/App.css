@@ -47,3 +47,8 @@ body {
   gap: 8px;
   padding: 16px;
 }
+
+ul,
+li {
+  list-style: none;
+}
