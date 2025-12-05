@@ -22,7 +22,7 @@ body {
   display: flex;
 }
 
-.sider {
+.slider {
   display: flex;
   width: 300px;
   flex-direction: column;
@@ -46,9 +46,4 @@ body {
   align-items: center;
   gap: 8px;
   padding: 16px;
-}
-
-ul,
-li {
-  list-style: none;
 }
