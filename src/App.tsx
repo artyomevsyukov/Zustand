@@ -1,24 +1,35 @@
 import "./App.css"
-import { Button, Card, Rate, Tag } from "antd"
+import { Button, Card, Input, Rate, Tag } from "antd"
 import { useCoffeeStore } from "./model/coffeeStore"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { ShoppingCartOutlined } from "@ant-design/icons"
+
 function App() {
   const { getCoffeeList, coffeeList } = useCoffeeStore()
+  const [inputValue, setInputValue] = useState<string | undefined>()
+  const inputHandler = (text: string) => {
+    getCoffeeList({ text: text })
+    setInputValue(text)
+  }
 
   useEffect(() => {
     getCoffeeList()
-  }, [])
+  }, [getCoffeeList])
 
   return (
-    <div className="wrapper">
+    <div /* className="wrapper" */>
+      <Input
+        placeholder="Поиск "
+        value={inputValue}
+        onChange={(e) => inputHandler(e.target.value)}
+      />
       {coffeeList && (
         <div className="cardsContainer">
           {coffeeList.map((coffee) => (
             <Card
               hoverable
               key={coffee.id}
-              cover={<img src={coffee.image} />}
+              cover={<img alt={coffee.name} src={coffee.image} />}
               actions={[
                 <Button icon={<ShoppingCartOutlined />} key={coffee.name}>
                   {coffee.price}

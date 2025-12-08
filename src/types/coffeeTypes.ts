@@ -9,3 +9,7 @@ export type CoffeeType = {
   image: string
   rating: number
 }
+
+export type getCoffeeListReqParams = {
+  text?: string
+}

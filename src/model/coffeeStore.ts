@@ -1,5 +1,5 @@
 import axios from "axios"
-import type { CoffeeType } from "../types/coffeeTypes"
+import type { CoffeeType, getCoffeeListReqParams } from "../types/coffeeTypes"
 import { create, type StateCreator } from "zustand"
 import { devtools } from "zustand/middleware"
 
@@ -10,7 +10,7 @@ type CoffeeState = {
 }
 
 type CoffeeActions = {
-  getCoffeeList: () => void
+  getCoffeeList: (params?: getCoffeeListReqParams) => Promise<void>
 }
 
 const coffeeSlice: StateCreator<
@@ -19,9 +19,9 @@ const coffeeSlice: StateCreator<
 > = (set) => ({
   coffeeList: undefined,
 
-  getCoffeeList: async () => {
+  getCoffeeList: async (params?: getCoffeeListReqParams) => {
     try {
-      const { data } = await axios.get<CoffeeType[]>(BASE_URL)
+      const { data } = await axios.get<CoffeeType[]>(BASE_URL, { params })
       set({ coffeeList: data })
     } catch (error) {
       console.log(error)
