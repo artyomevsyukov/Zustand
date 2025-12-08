@@ -1,15 +1,41 @@
 import "./App.css"
 import { Button, Card, Input, Rate, Tag } from "antd"
 import { useCoffeeStore } from "./model/coffeeStore"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { ShoppingCartOutlined } from "@ant-design/icons"
+import { debounce } from "./utils/debounce"
 
 function App() {
   const { getCoffeeList, coffeeList } = useCoffeeStore()
   const [inputValue, setInputValue] = useState<string | undefined>()
-  const inputHandler = (text: string) => {
-    getCoffeeList({ text: text })
+  // const inputHandler = (text: string) => {
+  //   getCoffeeList({ text: text })
+  //   setInputValue(text)
+  // }
+
+  // const debouncedSearch = useCallback(
+  //   debounce((text: string) => {
+  //     getCoffeeList(text ? { text } : undefined)
+  //   }, 300),
+  //   [getCoffeeList]
+  // )
+
+  const searchFunction = useCallback(
+    (text: string) => {
+      getCoffeeList(text ? { text } : undefined)
+    },
+    [getCoffeeList]
+  )
+
+  const debouncedSearch = useMemo(
+    () => debounce(searchFunction, 300),
+    [searchFunction]
+  )
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const text = e.target.value
     setInputValue(text)
+    debouncedSearch(text)
   }
 
   useEffect(() => {
@@ -21,7 +47,8 @@ function App() {
       <Input
         placeholder="Поиск "
         value={inputValue}
-        onChange={(e) => inputHandler(e.target.value)}
+        // onChange={(e) => inputHandler(e.target.value)}
+        onChange={handleSearchChange}
       />
       {coffeeList && (
         <div className="cardsContainer">
