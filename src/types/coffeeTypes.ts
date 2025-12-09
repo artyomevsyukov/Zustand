@@ -10,6 +10,14 @@ export type CoffeeType = {
   rating: number
 }
 
+export type CoffeeState = {
+  coffeeList?: CoffeeType[]
+}
+
+export type CoffeeActions = {
+  getCoffeeList: (params?: getCoffeeListReqParams) => Promise<void>
+}
+
 export type getCoffeeListReqParams = {
   text?: string
 }

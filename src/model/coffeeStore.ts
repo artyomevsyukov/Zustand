@@ -1,17 +1,14 @@
 import axios from "axios"
-import type { CoffeeType, getCoffeeListReqParams } from "../types/coffeeTypes"
+import type {
+  CoffeeActions,
+  CoffeeState,
+  CoffeeType,
+  getCoffeeListReqParams,
+} from "../types/coffeeTypes"
 import { create, type StateCreator } from "zustand"
 import { devtools } from "zustand/middleware"
 
 const BASE_URL = "https://purpleschool.ru/coffee-api"
-
-type CoffeeState = {
-  coffeeList?: CoffeeType[]
-}
-
-type CoffeeActions = {
-  getCoffeeList: (params?: getCoffeeListReqParams) => Promise<void>
-}
 
 const coffeeSlice: StateCreator<
   CoffeeState & CoffeeActions,

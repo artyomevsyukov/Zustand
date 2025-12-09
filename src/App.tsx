@@ -8,17 +8,6 @@ import { debounce } from "./utils/debounce"
 function App() {
   const { getCoffeeList, coffeeList } = useCoffeeStore()
   const [inputValue, setInputValue] = useState<string | undefined>()
-  // const inputHandler = (text: string) => {
-  //   getCoffeeList({ text: text })
-  //   setInputValue(text)
-  // }
-
-  // const debouncedSearch = useCallback(
-  //   debounce((text: string) => {
-  //     getCoffeeList(text ? { text } : undefined)
-  //   }, 300),
-  //   [getCoffeeList]
-  // )
 
   const searchFunction = useCallback(
     (text: string) => {
@@ -47,7 +36,6 @@ function App() {
       <Input
         placeholder="Поиск "
         value={inputValue}
-        // onChange={(e) => inputHandler(e.target.value)}
         onChange={handleSearchChange}
       />
       {coffeeList && (
