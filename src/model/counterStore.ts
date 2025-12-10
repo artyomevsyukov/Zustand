@@ -1,27 +1,47 @@
 import { create, type StateCreator } from "zustand"
+import { persist } from "zustand/middleware"
 
 type CounterState = {
   counter: number
+  persistentCounter: number
 }
 
 type CounterAction = {
   increment: () => void
   decrement: () => void
   changeByAmount: (value: number) => void
+  resetStore: () => void
 }
 
-const counterSlice: StateCreator<CounterState & CounterAction> = (
-  set,
-  get
-) => ({
+const initialState: CounterState = {
   counter: 0,
+  persistentCounter: 0,
+}
+
+const counterSlice: StateCreator<
+  CounterState & CounterAction,
+  [["zustand/persist", unknown]]
+> = (set, get) => ({
+  ...initialState,
+
+  resetStore: () => {
+    set(initialState)
+  },
   increment: () => {
-    const { counter } = get()
-    set((state) => ({ ...state, counter: counter + 1 }))
+    const { counter, persistentCounter } = get()
+    set((state) => ({
+      ...state,
+      counter: counter + 1,
+      persistentCounter: persistentCounter + 1,
+    }))
   },
   decrement: () => {
-    const { counter } = get()
-    set((state) => ({ ...state, counter: counter - 1 }))
+    const { counter, persistentCounter } = get()
+    set((state) => ({
+      ...state,
+      counter: counter - 1,
+      persistentCounter: persistentCounter - 1,
+    }))
   },
   changeByAmount: (value: number) => {
     const { counter } = get()
@@ -29,8 +49,11 @@ const counterSlice: StateCreator<CounterState & CounterAction> = (
   },
 })
 
-export const useCounterStore = create<CounterState & CounterAction>(
-  counterSlice
+export const useCounterStore = create<CounterState & CounterAction>()(
+  persist(counterSlice, {
+    name: "CounterStore",
+    partialize: (state) => ({ persistentCounter: state.persistentCounter }),
+  })
 )
 
 export const changeByAmount = (value: number) =>
