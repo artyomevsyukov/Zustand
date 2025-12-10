@@ -2,6 +2,7 @@ import { Button } from "antd"
 import "./App.css"
 import { useCounterStore } from "./model/counterStore"
 import { useTodoStore } from "./model/todoStore"
+import { resetAllStore } from "./helpers/create"
 // import { Button, Card, Input, Rate, Tag } from "antd"
 // import { useCoffeeStore } from "./model/coffeeStore"
 // import { useCallback, useEffect, useMemo, useState } from "react"
@@ -41,12 +42,15 @@ function App() {
 
   return (
     <div className="wrapper">
-      <Button onClick={increment}>+</Button>
-      <span>{counter}</span>
-      <span>{persistentCounter}</span>
-      <Button onClick={decrement}>-</Button>
-      <Button onClick={resetStore}>RESET</Button>
-      <Button onClick={() => addTodo("text")}>add todo</Button>
+      <div className="container">
+        <Button onClick={increment}>+</Button>
+        <span>{counter}</span>
+        <span>{persistentCounter}</span>
+        <Button onClick={decrement}>-</Button>
+        <Button onClick={resetStore}>RESET</Button>
+        <Button onClick={resetAllStore}>RESET ALL STORE</Button>
+        <Button onClick={() => addTodo("text")}>add todo</Button>
+      </div>
       <ul>
         {todos
           ? todos.map((todo) => {
