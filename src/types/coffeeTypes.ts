@@ -12,8 +12,8 @@ export type CoffeeType = {
 
 export type CoffeeState = {
   coffeeList?: CoffeeType[]
-  cart?: OrderItem[]
-  address?: string
+  cart: OrderItem[]
+  address: string
 }
 
 export type CoffeeActions = {

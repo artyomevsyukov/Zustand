@@ -2,10 +2,12 @@ import "./App.css"
 
 import { Button, Card, Input, Rate, Tag } from "antd"
 import { useCoffeeStore } from "./model/coffeeStore"
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo } from "react"
 import { ShoppingCartOutlined } from "@ant-design/icons"
 import { debounce } from "./utils/debounce"
 import type { CoffeeType } from "./types/coffeeTypes"
+import { useSearchStore } from "./model/searchStore"
+import LiveClock from "./components/LiveClock"
 
 function App() {
   const {
@@ -18,13 +20,15 @@ function App() {
     address,
     setAddress,
   } = useCoffeeStore()
-  const [inputValue, setInputValue] = useState<string>("")
+
+  const { text, setText } = useSearchStore()
 
   const searchFunction = useCallback(
     (text: string) => {
-      getCoffeeList(text ? { text } : undefined)
+      // getCoffeeList(text ? { text } : undefined)
+      setText(text)
     },
-    [getCoffeeList]
+    [setText]
   )
 
   const debouncedSearch = useMemo(
@@ -34,7 +38,7 @@ function App() {
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const text = e.target.value
-    setInputValue(text)
+    setText(text)
     debouncedSearch(text)
   }
 
@@ -50,11 +54,8 @@ function App() {
 
   return (
     <div /* className="wrapper" */>
-      <Input
-        placeholder="Поиск "
-        value={inputValue}
-        onChange={handleSearchChange}
-      />
+      <LiveClock />
+      <Input placeholder="Поиск " value={text} onChange={handleSearchChange} />
       {coffeeList && (
         <div style={{ display: "flex" }}>
           <div className="cardsContainer">
@@ -66,7 +67,7 @@ function App() {
                 actions={[
                   <Button
                     icon={<ShoppingCartOutlined />}
-                    key={coffee.name}
+                    key={`cart-${coffee.id}`}
                     onClick={handleAddToCart(coffee)}>
                     {coffee.price} ₽
                   </Button>,
@@ -88,8 +89,8 @@ function App() {
             <h1> Заказ</h1>
             {cart && cart.length > 0 ? (
               <>
-                {cart.map((item, index) => (
-                  <div key={index}>
+                {cart.map((item) => (
+                  <div key={item.id}>
                     {item.name} - {item.quantity}
                   </div>
                 ))}
@@ -103,7 +104,7 @@ function App() {
                 <Button
                   type="primary"
                   onClick={orderCoffee}
-                  disabled={!address}>
+                  disabled={!address.trim()}>
                   Сделать заказ
                 </Button>
                 <Button onClick={clearCart}>Очистить корзину</Button>

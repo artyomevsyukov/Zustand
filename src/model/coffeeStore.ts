@@ -14,8 +14,8 @@ const BASE_URL = "https://purpleschool.ru/coffee-api"
 
 const initialState: CoffeeState = {
   coffeeList: undefined,
-  cart: undefined,
-  address: undefined,
+  cart: [],
+  address: "",
 }
 
 const coffeeSlice: StateCreator<
@@ -35,11 +35,11 @@ const coffeeSlice: StateCreator<
   orderCoffee: async () => {
     const { cart, address, clearCart } = get()
     try {
-      const { data } = await axios.post<OrderCoffeeRes>(BASE_URL + "order", {
+      const { data } = await axios.post<OrderCoffeeRes>(`${BASE_URL}/order`, {
         address,
         orderItems: cart,
       })
-      if (data) {
+      if (data.success) {
         alert(data.message)
         clearCart()
       }
@@ -49,10 +49,7 @@ const coffeeSlice: StateCreator<
   },
   addToCart: (coffee: CoffeeType) => {
     const { cart } = get()
-    // let { cart } = get()
-    // if (!cart) {
-    //   cart = []
-    // }
+
     const existingItem = cart.find((item) => item.id === coffee.id)
     if (existingItem) {
       const updateCart = cart.map((item) =>
@@ -66,11 +63,12 @@ const coffeeSlice: StateCreator<
         size: "L",
         quantity: 1,
       }
-      set({ cart: cart ? [...cart, newItem] : [newItem] })
+      // set({ cart: cart ? [...cart, newItem] : [newItem] })
+      set({ cart: [...cart, newItem] })
     }
   },
   clearCart: () => {
-    set({ cart: undefined })
+    set({ cart: [] })
   },
   setAddress: (address: string) => {
     set({ address })
@@ -89,3 +87,6 @@ export const useCoffeeStore = create<CoffeeState & CoffeeActions>()(
     { name: "coffeeStore" }
   )
 )
+
+export const getCoffeeList = (params?: getCoffeeListReqParams) =>
+  useCoffeeStore.getState().getCoffeeList(params)
