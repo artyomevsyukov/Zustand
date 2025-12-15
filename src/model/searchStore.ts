@@ -1,6 +1,9 @@
-import { create, type StateCreator } from "zustand"
-import { devtools } from "zustand/middleware"
+import { type StateCreator } from "zustand"
+import { createJSONStorage, devtools, persist } from "zustand/middleware"
 import { getCoffeeList } from "./coffeeStore"
+import { hashStorage } from "../helpers/hashStore"
+import { create } from "../helpers/create"
+import { debounce } from "../utils/debounce"
 
 type SearchState = {
   text: string
@@ -16,21 +19,32 @@ const initialState: SearchState = {
 
 const searchSlice: StateCreator<
   SearchState & SearchAction,
-  [["zustand/devtools", never]]
-  //   ["zustand/persist", unknown]]
+  [["zustand/devtools", never], ["zustand/persist", unknown]]
 > = (set) => ({
   ...initialState,
   setText: (text) => set({ text }),
 })
 
 export const useSearchStore = create<SearchState & SearchAction>()(
-  devtools(searchSlice, { name: "searchStore" })
+  devtools(
+    persist(searchSlice, {
+      name: "searchStore",
+      storage: createJSONStorage(() => hashStorage),
+    }),
+    {
+      name: "searchStore",
+    }
+  )
 )
+
+const debouncedSearch = debounce((text: string) => {
+  getCoffeeList({
+    text: text.trim() === "" ? undefined : text,
+  })
+}, 500)
 
 useSearchStore.subscribe((state, prevState) => {
   if (state.text !== prevState.text) {
-    getCoffeeList({
-      text: state.text.trim() === "" ? undefined : state.text,
-    })
+    debouncedSearch(state.text)
   }
 })

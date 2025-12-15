@@ -2,9 +2,8 @@ import "./App.css"
 
 import { Button, Card, Input, Rate, Tag } from "antd"
 import { useCoffeeStore } from "./model/coffeeStore"
-import { useCallback, useEffect, useMemo } from "react"
+import { useEffect } from "react"
 import { ShoppingCartOutlined } from "@ant-design/icons"
-import { debounce } from "./utils/debounce"
 import type { CoffeeType } from "./types/coffeeTypes"
 import { useSearchStore } from "./model/searchStore"
 import LiveClock from "./components/LiveClock"
@@ -23,27 +22,13 @@ function App() {
 
   const { text, setText } = useSearchStore()
 
-  const searchFunction = useCallback(
-    (text: string) => {
-      // getCoffeeList(text ? { text } : undefined)
-      setText(text)
-    },
-    [setText]
-  )
-
-  const debouncedSearch = useMemo(
-    () => debounce(searchFunction, 300),
-    [searchFunction]
-  )
-
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const text = e.target.value
     setText(text)
-    debouncedSearch(text)
   }
 
   useEffect(() => {
-    getCoffeeList()
+    getCoffeeList({ text })
   }, [getCoffeeList])
 
   const handleAddToCart = (coffee: CoffeeType) => (e: React.MouseEvent) => {
