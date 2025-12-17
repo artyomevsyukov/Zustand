@@ -14,6 +14,7 @@ export type CoffeeState = {
   coffeeList?: CoffeeType[]
   cart: OrderItem[]
   address: string
+  params: getCoffeeListReqParams
 }
 
 export type CoffeeActions = {
@@ -22,6 +23,7 @@ export type CoffeeActions = {
   clearCart: () => void
   setAddress: (address: string) => void
   orderCoffee: () => Promise<void>
+  setParams: (params?: getCoffeeListReqParams) => void
 }
 
 export type getCoffeeListReqParams = {

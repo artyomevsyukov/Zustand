@@ -16,6 +16,7 @@ const initialState: CoffeeState = {
   coffeeList: undefined,
   cart: [],
   address: "",
+  params: { text: undefined },
 }
 
 const coffeeSlice: StateCreator<
@@ -24,6 +25,11 @@ const coffeeSlice: StateCreator<
 > = (set, get) => ({
   ...initialState,
 
+  setParams: (newParams) => {
+    const { getCoffeeList, params } = get()
+    set({ params: { ...params, ...newParams } }, false, "setParams")
+    getCoffeeList(params)
+  },
   getCoffeeList: async (params?: getCoffeeListReqParams) => {
     try {
       const { data } = await axios.get<CoffeeType[]>(BASE_URL, { params })

@@ -1,50 +1,50 @@
-import { type StateCreator } from "zustand"
-import { createJSONStorage, devtools, persist } from "zustand/middleware"
-import { getCoffeeList } from "./coffeeStore"
-import { hashStorage } from "../helpers/hashStore"
-import { create } from "../helpers/create"
-import { debounce } from "../utils/debounce"
+// import { type StateCreator } from "zustand"
+// import { createJSONStorage, devtools, persist } from "zustand/middleware"
+// import { getCoffeeList } from "./coffeeStore"
+// import { hashStorage } from "../helpers/hashStore"
+// import { create } from "../helpers/create"
+// import { debounce } from "../utils/debounce"
 
-type SearchState = {
-  text: string
-}
+// type SearchState = {
+//   text: string
+// }
 
-type SearchAction = {
-  setText: (text: string) => void
-}
+// type SearchAction = {
+//   setText: (text: string) => void
+// }
 
-const initialState: SearchState = {
-  text: "",
-}
+// const initialState: SearchState = {
+//   text: "",
+// }
 
-const searchSlice: StateCreator<
-  SearchState & SearchAction,
-  [["zustand/devtools", never], ["zustand/persist", unknown]]
-> = (set) => ({
-  ...initialState,
-  setText: (text) => set({ text }),
-})
+// const searchSlice: StateCreator<
+//   SearchState & SearchAction,
+//   [["zustand/devtools", never], ["zustand/persist", unknown]]
+// > = (set) => ({
+//   ...initialState,
+//   setText: (text) => set({ text }),
+// })
 
-export const useSearchStore = create<SearchState & SearchAction>()(
-  devtools(
-    persist(searchSlice, {
-      name: "searchStore",
-      storage: createJSONStorage(() => hashStorage),
-    }),
-    {
-      name: "searchStore",
-    }
-  )
-)
+// export const useSearchStore = create<SearchState & SearchAction>()(
+//   devtools(
+//     persist(searchSlice, {
+//       name: "searchStore",
+//       storage: createJSONStorage(() => hashStorage),
+//     }),
+//     {
+//       name: "searchStore",
+//     }
+//   )
+// )
 
-const debouncedSearch = debounce((text: string) => {
-  getCoffeeList({
-    text: text.trim() === "" ? undefined : text,
-  })
-}, 500)
+// const debouncedSearch = debounce((text: string) => {
+//   getCoffeeList({
+//     text: text.trim() === "" ? undefined : text,
+//   })
+// }, 2500)
 
-useSearchStore.subscribe((state, prevState) => {
-  if (state.text !== prevState.text) {
-    debouncedSearch(state.text)
-  }
-})
+// useSearchStore.subscribe((state, prevState) => {
+//   if (state.text !== prevState.text) {
+//     debouncedSearch(state.text)
+//   }
+// })

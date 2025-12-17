@@ -5,8 +5,10 @@ import { useCoffeeStore } from "./model/coffeeStore"
 import { useEffect } from "react"
 import { ShoppingCartOutlined } from "@ant-design/icons"
 import type { CoffeeType } from "./types/coffeeTypes"
-import { useSearchStore } from "./model/searchStore"
+// import { useSearchStore } from "./model/searchStore"
 import LiveClock from "./components/LiveClock"
+// import useUrlStorage from "./helpers/useUrlStorage"
+import { useSearchParams } from "react-router-dom"
 
 function App() {
   const {
@@ -18,18 +20,42 @@ function App() {
     orderCoffee,
     address,
     setAddress,
+    // params,
+    // setParams,
   } = useCoffeeStore()
 
-  const { text, setText } = useSearchStore()
+  // const { text, setText } = useSearchStore()
 
+  // const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const text = e.target.value
+  //   setParams({ text })
+  // }
+
+  // useEffect(() => {
+  //   getCoffeeList(params)
+  // }, [getCoffeeList, params])
+
+  // useUrlStorage(params, setParams)
+
+  const [queryParams, setQueryParams] = useSearchParams()
+
+  const searchText = queryParams.get("text") ?? ""
+
+  // 2. Обработчик меняет ТОЛЬКО URL
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const text = e.target.value
-    setText(text)
+    const value = e.target.value
+
+    // Если текст есть — ставим его, если пустой — удаляем параметр из URL совсем
+    if (value) {
+      setQueryParams({ text: value }, { replace: true })
+    } else {
+      setQueryParams({}, { replace: true })
+    }
   }
 
   useEffect(() => {
-    getCoffeeList({ text })
-  }, [getCoffeeList])
+    getCoffeeList({ text: searchText })
+  }, [getCoffeeList, searchText])
 
   const handleAddToCart = (coffee: CoffeeType) => (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -40,7 +66,12 @@ function App() {
   return (
     <div /* className="wrapper" */>
       <LiveClock />
-      <Input placeholder="Поиск " value={text} onChange={handleSearchChange} />
+      <Input
+        placeholder="Поиск "
+        value={searchText}
+        // value={params.text}
+        onChange={handleSearchChange}
+      />
       {coffeeList && (
         <div style={{ display: "flex" }}>
           <div className="cardsContainer">
