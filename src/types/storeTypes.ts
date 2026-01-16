@@ -10,20 +10,27 @@ export type CoffeeType = {
   rating: number
 }
 
-export type CoffeeState = {
+export type ListState = {
   coffeeList?: CoffeeType[]
-  cart: OrderItem[]
-  address: string
   params: getCoffeeListReqParams
 }
 
-export type CoffeeActions = {
+export type ListActions = {
   getCoffeeList: (params?: getCoffeeListReqParams) => Promise<void>
+
+  setParams: (params?: getCoffeeListReqParams) => void
+}
+
+export type CartState = {
+  cart: OrderItem[]
+  address: string
+}
+
+export type CartAction = {
   addToCart: (coffee: CoffeeType) => void
   clearCart: () => void
   setAddress: (address: string) => void
   orderCoffee: () => Promise<void>
-  setParams: (params?: getCoffeeListReqParams) => void
 }
 
 export type getCoffeeListReqParams = {

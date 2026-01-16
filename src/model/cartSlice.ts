@@ -1,42 +1,24 @@
 import axios from "axios"
+import { type StateCreator } from "zustand"
 import type {
+  CartAction,
+  CartState,
+  CoffeeType,
   ListActions,
   ListState,
-  CoffeeType,
-  getCoffeeListReqParams,
-  OrderItem,
   OrderCoffeeRes,
+  OrderItem,
 } from "../types/storeTypes"
-import { create, type StateCreator } from "zustand"
-import { devtools, persist } from "zustand/middleware"
 import { BASE_URL } from "../api/coreApi"
 
-const initialState: ListState = {
-  coffeeList: undefined,
+export const cartSlice: StateCreator<
+  CartState & CartAction & ListActions & ListState,
+  [["zustand/devtools", never], ["zustand/persist", unknown]],
+  [["zustand/devtools", never], ["zustand/persist", unknown]],
+  CartState & CartAction
+> = (set, get) => ({
   cart: [],
   address: "",
-  params: { text: undefined },
-}
-
-const coffeeSlice: StateCreator<
-  ListState & ListActions,
-  [["zustand/devtools", never], ["zustand/persist", unknown]]
-> = (set, get) => ({
-  ...initialState,
-
-  setParams: (newParams) => {
-    const { getCoffeeList, params } = get()
-    set({ params: { ...params, ...newParams } }, false, "setParams")
-    getCoffeeList(params)
-  },
-  getCoffeeList: async (params?: getCoffeeListReqParams) => {
-    try {
-      const { data } = await axios.get<CoffeeType[]>(BASE_URL, { params })
-      set({ coffeeList: data })
-    } catch (error) {
-      console.log(error)
-    }
-  },
   orderCoffee: async () => {
     const { cart, address, clearCart } = get()
     try {
@@ -79,16 +61,3 @@ const coffeeSlice: StateCreator<
     set({ address })
   },
 })
-
-export const useCoffeeStore = create<ListState & ListActions>()(
-  devtools(
-    persist(coffeeSlice, {
-      name: "coffeeStore",
-      partialize: (state) => ({ cart: state.cart, address: state.address }),
-    }),
-    { name: "coffeeStore" }
-  )
-)
-
-export const getCoffeeList = (params?: getCoffeeListReqParams) =>
-  useCoffeeStore.getState().getCoffeeList(params)
