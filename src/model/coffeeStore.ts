@@ -5,13 +5,15 @@ import type {
   CoffeeType,
   getCoffeeListReqParams,
   OrderItem,
+  CartState,
+  CartAction,
   OrderCoffeeRes,
 } from "../types/storeTypes"
 import { create, type StateCreator } from "zustand"
 import { devtools, persist } from "zustand/middleware"
-import { BASE_URL } from "../api/coreApi"
+import { BASE_URL } from "../api/CoreApi"
 
-const initialState: ListState = {
+const initialState: ListState & CartState = {
   coffeeList: undefined,
   cart: [],
   address: "",
@@ -19,7 +21,7 @@ const initialState: ListState = {
 }
 
 const coffeeSlice: StateCreator<
-  ListState & ListActions,
+  ListState & ListActions & CartState & CartAction,
   [["zustand/devtools", never], ["zustand/persist", unknown]]
 > = (set, get) => ({
   ...initialState,
@@ -58,7 +60,7 @@ const coffeeSlice: StateCreator<
     const existingItem = cart.find((item) => item.id === coffee.id)
     if (existingItem) {
       const updateCart = cart.map((item) =>
-        item.id === coffee.id ? { ...item, quantity: item.quantity + 1 } : item
+        item.id === coffee.id ? { ...item, quantity: item.quantity + 1 } : item,
       )
       set({ cart: updateCart })
     } else {
@@ -80,14 +82,16 @@ const coffeeSlice: StateCreator<
   },
 })
 
-export const useCoffeeStore = create<ListState & ListActions>()(
+export const useCoffeeStore = create<
+  ListState & ListActions & CartState & CartAction
+>()(
   devtools(
     persist(coffeeSlice, {
       name: "coffeeStore",
       partialize: (state) => ({ cart: state.cart, address: state.address }),
     }),
-    { name: "coffeeStore" }
-  )
+    { name: "coffeeStore" },
+  ),
 )
 
 export const getCoffeeList = (params?: getCoffeeListReqParams) =>

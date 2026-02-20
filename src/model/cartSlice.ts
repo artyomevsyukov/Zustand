@@ -9,7 +9,7 @@ import type {
   OrderCoffeeRes,
   OrderItem,
 } from "../types/storeTypes"
-import { BASE_URL } from "../api/coreApi"
+import { BASE_URL } from "../api/CoreApi"
 
 export const cartSlice: StateCreator<
   CartState & CartAction & ListActions & ListState,
@@ -40,7 +40,7 @@ export const cartSlice: StateCreator<
     const existingItem = cart.find((item) => item.id === coffee.id)
     if (existingItem) {
       const updateCart = cart.map((item) =>
-        item.id === coffee.id ? { ...item, quantity: item.quantity + 1 } : item
+        item.id === coffee.id ? { ...item, quantity: item.quantity + 1 } : item,
       )
       set({ cart: updateCart })
     } else {
