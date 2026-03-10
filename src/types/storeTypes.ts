@@ -1,5 +1,12 @@
 export type CoffeeTypeName = "americano" | "cappuccino" | "latte" | "macchiato"
 
+export type CoffeeCategoryEnum = {
+  americano: "americano"
+  latte: "latte"
+  cappuccino: "cappuccino"
+  macchiato: "macchiato"
+}
+
 export type CoffeeType = {
   id: number
   name: string
@@ -8,6 +15,11 @@ export type CoffeeType = {
   price: number
   image: string
   rating: number
+}
+
+export type getCoffeeListReqParams = {
+  text?: string
+  type?: CoffeeCategoryEnum
 }
 
 export type ListState = {
@@ -31,10 +43,6 @@ export type CartAction = {
   clearCart: () => void
   setAddress: (address: string) => void
   orderCoffee: () => Promise<void>
-}
-
-export type getCoffeeListReqParams = {
-  text?: string
 }
 
 export type OrderItem = {

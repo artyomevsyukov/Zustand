@@ -1,11 +1,9 @@
 import { Button, Card, Rate, Tag } from "antd"
 import { ShoppingCartOutlined } from "@ant-design/icons"
 import type { CoffeeType } from "../types/storeTypes"
-import { useCoffeeStore } from "../model/coffeeStore"
+import { addToCart } from "../model/coffeeStore"
 
 function CoffeeCard({ coffee }: { coffee: CoffeeType }) {
-  const { addToCart } = useCoffeeStore()
-
   const handleAddToCart = (coffee: CoffeeType) => (e: React.MouseEvent) => {
     e.stopPropagation()
     addToCart(coffee)
