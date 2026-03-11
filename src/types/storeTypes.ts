@@ -1,10 +1,16 @@
 export type CoffeeTypeName = "americano" | "cappuccino" | "latte" | "macchiato"
 
-export type CoffeeCategoryEnum = {
-  americano: "americano"
-  latte: "latte"
-  cappuccino: "cappuccino"
-  macchiato: "macchiato"
+// export type CoffeeCategoryEnum = {
+//   americano: "americano"
+//   latte: "latte"
+//   cappuccino: "cappuccino"
+//   macchiato: "macchiato"
+// }
+export enum CoffeeCategoryEnum {
+  americano = "americano",
+  latte = "latte",
+  cappuccino = "cappuccino",
+  macchiato = "macchiato",
 }
 
 export type CoffeeType = {

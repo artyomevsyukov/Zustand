@@ -24,8 +24,9 @@ export const listSlice: StateCreator<
   ...initialState,
   setParams: (newParams) => {
     const { getCoffeeList, params } = get()
-    set({ params: { ...params, ...newParams } }, false, "setParams")
-    getCoffeeList(params)
+    const mergedParams = { ...params, ...newParams }
+    set({ params: mergedParams }, false, "setParams")
+    getCoffeeList(mergedParams)
   },
   getCoffeeList: async (params?: getCoffeeListReqParams) => {
     try {

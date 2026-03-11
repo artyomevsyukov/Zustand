@@ -2,33 +2,31 @@ import { Input } from "antd"
 import { getCoffeeList, useCoffeeStore } from "../model/coffeeStore"
 import { useSearchParams } from "react-router-dom"
 import { useEffect } from "react"
-import { useShallow } from "zustand/shallow"
 
 export function SearchInput() {
-  const params = useCoffeeStore(useShallow((state) => state.params))
+  const text = useCoffeeStore((state) => state.params.text)
   const setParams = useCoffeeStore((state) => state.setParams)
-  const [, setQueryParams] = useSearchParams()
+  const [queryParams, setQueryParams] = useSearchParams()
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
 
-    if (value) {
-      setQueryParams({ text: value }, { replace: true })
-    } else {
-      setQueryParams({}, { replace: true })
-    }
+    const next = new URLSearchParams(queryParams)
+    if (value) next.set("text", value)
+    else next.delete("text")
+    setQueryParams(next, { replace: true })
 
     setParams({ text: value || undefined })
   }
 
   useEffect(() => {
-    getCoffeeList({ text: params.text })
-  }, [params.text])
+    getCoffeeList({ text })
+  }, [text])
 
   return (
     <Input
       placeholder="Поиск "
-      value={params.text ?? ""}
+      value={text ?? ""}
       onChange={handleSearchChange}
     />
   )
